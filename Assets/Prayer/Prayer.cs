@@ -4,16 +4,16 @@ using UnityEngine.InputSystem;
 public class Prayer : MonoBehaviour
 {
     Vector2 inputVec;
-    public float speed = 3;
+    public float speed = 5;
+    public float maxSpeed = 8;
+    float nowSpeed = 0;
     Rigidbody2D rb;
     public float jumpPower = 8f;
     [Header("jumpPowerと同じ数値")]
-    public float jumpOriginal = 8;
+    public float jumpOriginal = 8f;
     public float jump = 0f;
+    int number = 1;
     bool goJump = false;
-    public float jump_altitude = 0.66f;
-    [Header("ジャンプ回数やjunp_altitudeにより変える")]
-    public float ccc = 1.002f;
     bool onGround = false;
     public LayerMask groundLayer;
     bool ingame = true;
@@ -27,7 +27,7 @@ public class Prayer : MonoBehaviour
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
-    { 
+    {
         rb = GetComponent<Rigidbody2D>();
     }
 
@@ -36,13 +36,17 @@ public class Prayer : MonoBehaviour
     {
         if (ingame == true)
         {
-            int number = 1;
             onGround = Physics2D.CircleCast(transform.position,
                                             0.2f,
                                             Vector2.down,
                                             0.15f,
                                             groundLayer);
-            if (onGround || inputVec.x != 0)
+            if ((onGround || inputVec.x != 0) && Input.GetKey(KeyCode.LeftShift))
+            {
+                
+                rb.linearVelocity = new Vector2(inputVec.x * nowSpeed, rb.linearVelocity.y);
+            }
+            else if (onGround || inputVec.x != 0)
             {
                 rb.linearVelocity = new Vector2(inputVec.x * speed, rb.linearVelocity.y);
             }
@@ -54,7 +58,12 @@ public class Prayer : MonoBehaviour
             {
                 transform.localScale = new Vector2(-1, 1);
             }
-            if (goJump && jumpPower > ccc)
+            if (goJump && onGround)
+            {
+                jumpPower = jumpOriginal;
+                number = 1;
+            }
+            if (goJump && number != 7)
             {
                 if (number < 5)
                 {
@@ -62,22 +71,18 @@ public class Prayer : MonoBehaviour
                     Vector2 v = new Vector2(0, jumpPower);
                     rb.AddForce(v, ForceMode2D.Impulse);
                 }
-                if (number > 4)
+                else
                 {
                     Vector2 v = new Vector2(0, jump);
                     rb.AddForce(v, ForceMode2D.Impulse);
                 }
                 
-                jumpPower = jumpPower * jump_altitude;
+                jumpPower = jumpPower * 0.66f;
                 Debug.Log("ジャンプ回数は" + number);
                 goJump = false;
                 number = number + 1;
             }
-            else if (onGround)
-            {
-                jumpPower = jumpOriginal;
-                number = 1;
-            }
+            
             
         }
     }

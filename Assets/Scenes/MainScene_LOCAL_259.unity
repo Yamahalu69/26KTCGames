@@ -369,12 +369,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7c59b18f2237824ea476ea0cade25e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Prayer
-  speed: 3
+  speed: 5
   jumpPower: 8
   jumpOriginal: 8
-  jump: 8
-  jump_altitude: 0.66
-  ccc: 1.002
+  jump: 0
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
